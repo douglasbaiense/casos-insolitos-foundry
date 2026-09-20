@@ -1,0 +1,188 @@
+<div class="ci-main-content">
+  <nav class="ci-tabs" aria-label="Abas da ficha">
+    <button type="button" class="ci-tab-button active" data-tab-target="investigator"><i class="fa-solid fa-user-secret"></i> Investigador</button>
+    <button type="button" class="ci-tab-button" data-tab-target="inventory"><i class="fa-solid fa-briefcase"></i> Inventário</button>
+    <button type="button" class="ci-tab-button" data-tab-target="notes"><i class="fa-solid fa-file-lines"></i> Anotações</button>
+    <a class="ci-tab-external" href="https://casosinsolitos.com.br" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-book-open"></i> Regras</a>
+  </nav>
+
+  <div class="ci-toolbar">
+    <button type="button" data-action="test"><i class="fa-solid fa-dice-two"></i> Teste Padrão</button>
+    <button type="button" data-action="specialistTest"><i class="fa-solid fa-dice-four"></i> Especialização</button>
+    <button type="button" data-action="temporaryInsanity"><i class="fa-solid fa-brain"></i> Insanidade</button>
+    <button type="button" data-action="frenzy"><i class="fa-solid fa-magnifying-glass"></i> Frenesi</button>
+    <button type="button" data-action="announceOrder"><i class="fa-solid fa-list-ol"></i> Ordem de ações</button>
+  </div>
+
+  <section class="ci-tab-panel active ci-tab-scroll" data-tab-panel="investigator">
+    <div class="ci-tab-inner">
+      <section class="ci-section identity">
+        <div class="ci-field wide"><label>NOME DO INVESTIGADOR</label><input name="name" value="{{actor.name}}"></div>
+        <div class="ci-field"><label>IDADE</label><input type="number" min="0" name="system.age" value="{{system.age}}"></div>
+        <div class="ci-field"><label>GÊNERO</label><input name="system.gender" value="{{system.gender}}"></div>
+        <div class="ci-field full"><label>APARÊNCIA MARCANTE</label><input name="system.appearance" value="{{system.appearance}}"></div>
+        <div class="ci-field full"><label>HISTÓRIA BREVE</label><textarea name="system.history">{{system.history}}</textarea></div>
+      </section>
+
+      <section class="ci-grid">
+        <div class="ci-column">
+          <article class="ci-card gold example-card">
+            <div class="section-title-row">
+              <h2><span>◆</span> Especialização</h2>
+              <button type="button" class="example-button" data-examples="specialization" title="Exemplos" aria-label="Exemplos de Especialização">?</button>
+            </div>
+            <input name="system.specialization" value="{{system.specialization}}" placeholder="Profissão ou área de conhecimento profundo">
+            <p>Conhecimento e experiência profunda em uma área. Em tarefas excepcionais, use 4d6 e mantenha os 2 melhores.</p>
+            <div class="ci-examples-popover" data-examples-panel="specialization" hidden>
+              <strong>Exemplos — apenas sugestões</strong>
+              <div class="example-tags">{{#each examples.specialization}}<span>{{this}}</span>{{/each}}</div>
+            </div>
+          </article>
+
+          <article class="ci-card red example-card">
+            <div class="section-title-row">
+              <h2><span>◆</span> Impulsos investigativos</h2>
+              <button type="button" class="example-button" data-examples="impulses" title="Exemplos" aria-label="Exemplos de Impulsos Investigativos">?</button>
+            </div>
+            <label>VIRTUDE <input name="system.virtue" value="{{system.virtue}}"></label>
+            <label>DEFEITO <input name="system.flaw" value="{{system.flaw}}"></label>
+            <label>TRAUMA <input name="system.trauma" value="{{system.trauma}}"></label>
+            <p>Escolha um, todos, ou qualquer combinação — o que faz o investigador seguir em frente quando outros desistem.</p>
+            <div class="ci-examples-popover" data-examples-panel="impulses" hidden>
+              <strong>Exemplos — apenas sugestões</strong>
+              <div class="example-group"><b>Virtudes</b><div class="example-tags">{{#each examples.impulses.virtue}}<span>{{this}}</span>{{/each}}</div></div>
+              <div class="example-group"><b>Defeitos</b><div class="example-tags">{{#each examples.impulses.flaw}}<span>{{this}}</span>{{/each}}</div></div>
+              <div class="example-group"><b>Traumas</b><div class="example-tags">{{#each examples.impulses.trauma}}<span>{{this}}</span>{{/each}}</div></div>
+            </div>
+          </article>
+
+          <article class="ci-card green example-card">
+            <div class="section-title-row">
+              <h2><span>◆</span> Âncora emocional</h2>
+              <button type="button" class="example-button" data-examples="anchor" title="Exemplos" aria-label="Exemplos de Âncora Emocional">?</button>
+            </div>
+            <input class="anchor-input {{#if system.states.adrift}}anchor-struck{{/if}}" name="system.anchor" value="{{system.anchor}}">
+            <p>Alguém ou algo que torna a vida cotidiana valiosa — e que não pode ser negligenciado por muito tempo.</p>
+            <div class="condition-inline condition-adrift {{#if system.states.adrift}}active{{/if}}">
+              <button type="button" class="condition-chip red" data-action="toggleState" data-state="adrift" data-condition-state="adrift">
+                <i class="fa-solid {{#if system.states.adrift}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i> À Deriva
+              </button>
+              <span class="condition-hint">Não recupera PdS.</span>
+            </div>
+            {{#if system.states.adrift}}
+            <select name="system.anchorFate">
+              {{#each anchorFates}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+            </select>
+            {{/if}}
+            <div class="ci-examples-popover" data-examples-panel="anchor" hidden>
+              <strong>Exemplos — apenas sugestões</strong>
+              <div class="example-tags">{{#each examples.anchor}}<span>{{this}}</span>{{/each}}</div>
+            </div>
+          </article>
+        </div>
+
+        <div class="ci-column">
+          <article class="ci-card hp-card resource-card">
+            <div class="resource-head"><h2><span>◆</span> Pontos de Vida</h2></div>
+            <div class="pips">{{#each hpPips}}<span class="pip {{#if filled}}filled{{/if}}"></span>{{/each}}</div>
+            <div class="resource-edit"><input type="number" min="0" max="{{system.hp.max}}" name="system.hp.value" value="{{system.hp.value}}"><span>/ {{system.hp.max}}</span><button type="button" data-action="recoverHP">+1 PV</button></div>
+            <div class="resource-condition-row">
+              <span class="condition-chip red condition-readonly {{#if system.states.dying}}active{{/if}}" data-condition-state="dying"><i class="fa-solid {{#if system.states.dying}}fa-circle-exclamation{{else}}fa-circle{{/if}}"></i> Morrendo</span>
+              <button type="button" class="condition-chip gold {{#if system.states.debilitated}}active{{/if}}" data-action="toggleState" data-state="debilitated" data-condition-state="debilitated" title="Desmarcar Debilitado"><i class="fa-solid {{#if system.states.debilitated}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i> Debilitado</button>
+            </div>
+            <p>0 PV = Morrendo (3d6 min.) · Dano único ≥15 = morte instantânea.</p>
+          </article>
+
+          <article class="ci-card sanity-card resource-card">
+            <div class="resource-head"><h2><span>◆</span> Pontos de Sanidade</h2><i class="fa-solid fa-triangle-exclamation sanity-danger" title="À Deriva: situação grave" {{#unless system.states.adrift}}hidden{{/unless}}></i></div>
+            <div class="pips">{{#each sanityPips}}<span class="pip {{#if filled}}filled{{/if}}"></span>{{/each}}</div>
+            <div class="resource-edit"><input type="number" min="0" max="{{system.sanity.max}}" name="system.sanity.value" value="{{system.sanity.value}}"><span>/ {{system.sanity.max}}</span><button type="button" data-action="recoverSanity">+1 PdS</button></div>
+            <div class="resource-condition-row">
+              <span class="condition-chip green condition-readonly {{#if system.states.temporaryInsanity}}active{{/if}}" data-condition-state="temporaryInsanity"><i class="fa-solid {{#if system.states.temporaryInsanity}}fa-brain{{else}}fa-circle{{/if}}"></i> Insanidade Temporária</span>
+              {{#if system.states.temporaryInsanity}}<button type="button" class="condition-end" data-action="clearInsanity" title="Encerrar após a recuperação">Encerrar</button>{{/if}}
+            </div>
+            {{#if system.states.temporaryInsanity}}<div class="warning insanity-warning"><i class="fa-solid fa-triangle-exclamation"></i> Dura 1d6 minutos e aplica -2 em Testes.</div>{{/if}}
+            <p>0 PdS = Insanidade Temporária (role 2d6).</p>
+          </article>
+
+          <article class="ci-card gold compact">
+            <h2><span>◆</span> Categorias de dano</h2>
+            <div class="damage-grid">
+              <button type="button" class="damage-low" data-action="damage" data-formula="1d6" data-label="Baixa periculosidade"><strong>1d6</strong> <small>Baixa</small></button>
+              <button type="button" class="damage-medium" data-action="damage" data-formula="2d6" data-label="Média periculosidade"><strong>2d6</strong> <small>Média</small></button>
+              <button type="button" class="damage-high" data-action="damage" data-formula="3d6" data-label="Alta periculosidade"><strong>3d6</strong> <small>Alta</small></button>
+              <button type="button" class="damage-extreme" data-action="damage" data-formula="4d6" data-label="Altíssima periculosidade"><strong>4d6</strong> <small>Altíssima</small></button>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section class="ci-tab-panel ci-tab-scroll" data-tab-panel="inventory">
+    <div class="ci-tab-inner">
+      <section class="ci-card inventory-card">
+        <div class="section-title-row">
+          <h2><span>◆</span> Inventário</h2>
+          <button type="button" class="item-create-button" data-action="createEquipment"><i class="fa-solid fa-plus"></i> Novo equipamento</button>
+        </div>
+        <p class="section-description">Equipamentos, objetos e evidências pessoais.</p>
+        <div class="inventory-table" role="table" aria-label="Inventário">
+          <div class="inventory-row inventory-header">
+            <strong>ITEM</strong><strong>QTD.</strong><strong>CARREGADO</strong><strong>EVIDÊNCIA</strong><strong>DESCRIÇÃO</strong>
+          </div>
+          {{#if inventoryItems.length}}
+            {{#each inventoryItems}}
+            <div class="inventory-row {{#if system.evidence}}evidence{{/if}}">
+              <div class="inventory-cell item-name-cell"><input class="ci-inventory-input" data-item-id="{{id}}" data-item-field="name" value="{{name}}" aria-label="Nome do item"><button type="button" class="inventory-edit" data-action="editItem" data-item-id="{{id}}" title="Editar item"><i class="fa-solid fa-pen"></i></button><button type="button" class="inventory-delete" data-action="deleteItem" data-item-id="{{id}}" title="Excluir item"><i class="fa-solid fa-trash"></i></button></div>
+              <div class="inventory-cell"><input class="ci-inventory-input quantity-input" type="number" min="1" data-item-id="{{id}}" data-item-field="system.quantity" value="{{system.quantity}}" aria-label="Quantidade"></div>
+              <div class="inventory-cell center-cell"><input class="ci-inventory-input" type="checkbox" data-item-id="{{id}}" data-item-field="system.carried" {{checked system.carried}} aria-label="Carregado"></div>
+              <div class="inventory-cell center-cell"><input class="ci-inventory-input evidence-toggle" type="checkbox" data-item-id="{{id}}" data-item-field="system.evidence" {{checked system.evidence}} aria-label="Evidência"></div>
+              <div class="inventory-cell description-cell"><input class="ci-inventory-input" data-item-id="{{id}}" data-item-field="system.description" value="{{system.description}}" aria-label="Descrição do item" placeholder="Descrição ou observações"></div>
+            </div>
+            {{/each}}
+          {{else}}<div class="inventory-empty">Nenhum equipamento registrado.</div>{{/if}}
+        </div>
+      </section>
+
+      <section class="ci-card weapons-card">
+        <div class="section-title-row">
+          <h2><span>◆</span> Armas</h2>
+          <button type="button" class="item-create-button weapon-create-button" data-action="createWeapon"><i class="fa-solid fa-plus"></i> Nova arma</button>
+        </div>
+        <p class="section-description">Armas separadas do inventário para destacar tipo e periculosidade.</p>
+        <div class="weapon-table" role="table" aria-label="Armas">
+          <div class="weapon-row weapon-header"><strong>ARMA</strong><strong>CARREGADO</strong><strong>TIPO</strong><strong>PERICULOSIDADE</strong><strong>AÇÕES</strong></div>
+          {{#if weaponItems.length}}
+            {{#each weaponItems}}
+            <div class="weapon-row {{#if system.evidence}}evidence{{/if}}">
+              <div class="weapon-name"><i class="weapon-icon {{weaponIcon}}" aria-hidden="true"></i><input class="ci-inventory-input" data-item-id="{{id}}" data-item-field="name" value="{{name}}"></div>
+              <div class="center-cell"><input class="ci-inventory-input" type="checkbox" data-item-id="{{id}}" data-item-field="system.carried" {{checked system.carried}} aria-label="Carregado"></div>
+              <span>{{weaponTypeLabel}}</span>
+              <span class="danger-badge damage-{{dangerTone}}">{{damage}} · {{dangerLabel}}</span>
+              <div class="weapon-actions">
+                <button type="button" data-action="useWeapon" data-item-id="{{id}}" title="Rolar dano"><i class="fa-solid fa-dice-d6"></i></button>
+                <button type="button" data-action="editItem" data-item-id="{{id}}" title="Editar arma"><i class="fa-solid fa-pen"></i></button>
+                <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="Excluir arma"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+            {{/each}}
+          {{else}}<div class="inventory-empty">Nenhuma arma registrada.</div>{{/if}}
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section class="ci-tab-panel ci-tab-scroll" data-tab-panel="notes">
+    <div class="ci-tab-inner">
+      <section class="ci-card notes-section">
+        <h2><span>◆</span> Pistas</h2>
+        <textarea name="system.clues" class="notes-large" placeholder="Pistas encontradas, conexões, evidências e informações importantes...">{{system.clues}}</textarea>
+      </section>
+      <section class="ci-card notes-section">
+        <h2><span>◆</span> Notas</h2>
+        <textarea name="system.notes" class="notes-large" placeholder="Anotações do investigador, teorias, contatos e outros registros...">{{system.notes}}</textarea>
+      </section>
+    </div>
+  </section>
+</div>

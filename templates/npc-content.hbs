@@ -1,0 +1,129 @@
+<div class="ci-main-content npc-main-content">
+  <nav class="ci-tabs" aria-label="Abas da ficha de NPC">
+    <button type="button" class="ci-tab-button active" data-tab-target="npc"><i class="fa-solid fa-skull"></i> NPC</button>
+    <button type="button" class="ci-tab-button" data-tab-target="abilities"><i class="fa-solid fa-skull-crossbones"></i> Ameaças</button>
+    <button type="button" class="ci-tab-button" data-tab-target="inventory"><i class="fa-solid fa-briefcase"></i> Inventário</button>
+    <button type="button" class="ci-tab-button" data-tab-target="notes"><i class="fa-solid fa-file-lines"></i> Anotações</button>
+    <a class="ci-tab-external" href="https://casosinsolitos.com.br" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-book-open"></i> Regras</a>
+  </nav>
+
+  <div class="ci-toolbar npc-toolbar">
+    <button type="button" data-action="test"><i class="fa-solid fa-dice-two"></i> Teste Padrão</button>
+    <button type="button" data-action="specialistTest"><i class="fa-solid fa-dice-four"></i> Especialização</button>
+    <button type="button" class="npc-presence-roll" data-action="presenceShock" title="Rolar Presença Insólita" {{#unless presenceFormula}}disabled{{/unless}}><i class="fa-solid fa-dice-d6"></i> Presença</button>
+  </div>
+
+  <section class="ci-tab-panel active ci-tab-scroll" data-tab-panel="npc">
+    <div class="ci-tab-inner">
+      <section class="ci-section identity npc-identity">
+        <div class="ci-field"><label>NOME DO NPC</label><input name="name" value="{{actor.name}}"></div>
+        <div class="ci-field"><label>APARÊNCIA MARCANTE</label><input name="system.appearance" value="{{system.appearance}}"></div>
+      </section>
+
+      <div class="npc-profile-grid">
+        <section class="ci-grid npc-profile-row">
+          <article class="ci-card npc-purple-card">
+            <div class="section-title-row"><h2><span>◆</span> Especialização</h2></div>
+            <input name="system.specialization" value="{{system.specialization}}" placeholder="Profissão, conhecimento ou aptidão excepcional">
+          </article>
+
+          <article class="ci-card npc-presence-card">
+            <div class="section-title-row"><h2><span>◆</span> Presença Insólita</h2></div>
+            <select name="system.presence" aria-label="Presença Insólita">
+              {{#each presenceOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+            </select>
+            <p>Define o Abalo causado pela presença do NPC. Mundano não causa perda de Sanidade.</p>
+          </article>
+        </section>
+
+        <section class="ci-grid npc-profile-row">
+          <article class="ci-card npc-purple-card hp-card">
+            <div class="section-title-row"><h2><span>◆</span> Pontos de Vida</h2></div>
+            <div class="pips">{{#each hpPips}}<span class="pip {{#if filled}}filled{{/if}}"></span>{{/each}}</div>
+            <div class="resource-edit"><input type="number" min="0" max="{{system.hp.max}}" name="system.hp.value" value="{{system.hp.value}}"><span>/ {{system.hp.max}}</span><button type="button" data-action="recoverHP">+1 PV</button></div>
+            <div class="npc-resistance-block">
+              <label>RESISTÊNCIA A DANO</label>
+              <select name="system.damageResistance" aria-label="Resistência a Dano">
+                {{#each damageResistanceOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+              </select>
+            </div>
+            <div class="resource-condition-row"><span class="condition-chip red condition-readonly {{#if system.states.dying}}active{{/if}}" data-condition-state="dying"><i class="fa-solid fa-circle"></i> Morrendo</span></div>
+          </article>
+
+          <article class="ci-card npc-sanity-card resource-card sanity-card">
+            <div class="resource-head"><h2><span>◆</span> Pontos de Sanidade</h2></div>
+            <div class="npc-resistance-block npc-sanity-resistance">
+              <label>RESISTÊNCIA À LOUCURA</label>
+              <select name="system.sanityResistance" aria-label="Resistência à Loucura">
+                {{#each sanityResistanceOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+              </select>
+            </div>
+            <div class="pips">{{#each sanityPips}}<span class="pip {{#if filled}}filled{{/if}}"></span>{{/each}}</div>
+            <div class="resource-edit"><input type="number" min="0" max="{{system.sanity.max}}" name="system.sanity.value" value="{{system.sanity.value}}"><span>/ {{system.sanity.max}}</span><button type="button" data-action="recoverSanity">+1 PdS</button></div>
+            <div class="resource-condition-row"><span class="condition-chip green condition-readonly {{#if system.states.temporaryInsanity}}active{{/if}}" data-condition-state="temporaryInsanity"><i class="fa-solid fa-circle"></i> Insanidade Temporária</span></div>
+            <p>Use a Resistência à Loucura para determinar quais Abalos afetam este NPC.</p>
+          </article>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="ci-tab-panel ci-tab-scroll" data-tab-panel="abilities">
+    <div class="ci-tab-inner">
+      <section class="ci-card npc-abilities-card">
+        <div class="section-title-row">
+          <h2><span>◆</span> Habilidades Insólitas</h2>
+          <button type="button" class="item-create-button npc-ability-create" data-action="createAbility"><i class="fa-solid fa-plus"></i> Nova habilidade</button>
+        </div>
+        <p class="section-description">Capacidades especiais, rituais, poderes ou itens extraordinários do NPC.</p>
+        <div class="npc-ability-table" role="table" aria-label="Habilidades Insólitas">
+          <div class="npc-ability-row npc-ability-header"><strong>HABILIDADE</strong><strong>TIPO</strong><strong>ALVO</strong><strong>PERICULOSIDADE</strong><strong>AÇÕES</strong></div>
+          {{#if abilityItems.length}}
+            {{#each abilityItems}}
+            <div class="npc-ability-row">
+              <div class="npc-ability-name"><input class="ci-inventory-input" data-item-id="{{id}}" data-item-field="name" value="{{name}}"><small>{{system.description}}</small></div>
+              <span>{{abilityTypeLabel}}</span>
+              <span>{{targetLabel}}</span>
+              <span class="danger-badge damage-{{dangerTone}}">{{dangerLabel}}</span>
+              <div class="weapon-actions">
+                <button type="button" data-action="useAbility" data-item-id="{{id}}" title="Usar habilidade"><i class="fa-solid fa-dice-d6"></i></button>
+                <button type="button" data-action="editItem" data-item-id="{{id}}" title="Editar habilidade"><i class="fa-solid fa-pen"></i></button>
+                <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="Excluir habilidade"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+            {{/each}}
+          {{else}}<div class="inventory-empty">Nenhuma habilidade insólita registrada.</div>{{/if}}
+        </div>
+      </section>
+
+      <section class="ci-card weapons-card npc-weapons-card">
+        <div class="section-title-row">
+          <h2><span>◆</span> Armas</h2>
+          <button type="button" class="item-create-button weapon-create-button" data-action="createWeapon"><i class="fa-solid fa-plus"></i> Nova arma</button>
+        </div>
+        <p class="section-description">Armas separadas do inventário para destacar tipo e periculosidade.</p>
+        <div class="weapon-table" role="table" aria-label="Armas">
+          <div class="weapon-row weapon-header"><strong>ARMA</strong><strong>CARREGADO</strong><strong>TIPO</strong><strong>PERICULOSIDADE</strong><strong>AÇÕES</strong></div>
+          {{#if weaponItems.length}}
+            {{#each weaponItems}}
+            <div class="weapon-row {{#if system.evidence}}evidence{{/if}}">
+              <div class="weapon-name"><i class="weapon-icon {{weaponIcon}}" aria-hidden="true"></i><input class="ci-inventory-input" data-item-id="{{id}}" data-item-field="name" value="{{name}}"></div>
+              <div class="center-cell"><input class="ci-inventory-input" type="checkbox" data-item-id="{{id}}" data-item-field="system.carried" {{checked system.carried}} aria-label="Carregado"></div>
+              <span>{{weaponTypeLabel}}</span>
+              <span class="danger-badge damage-{{dangerTone}}">{{dangerLabel}}</span>
+              <div class="weapon-actions">
+                <button type="button" data-action="useWeapon" data-item-id="{{id}}" title="Rolar dano"><i class="fa-solid fa-dice-d6"></i></button>
+                <button type="button" data-action="editItem" data-item-id="{{id}}" title="Editar arma"><i class="fa-solid fa-pen"></i></button>
+                <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="Excluir arma"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+            {{/each}}
+          {{else}}<div class="inventory-empty">Nenhuma arma registrada.</div>{{/if}}
+        </div>
+      </section>
+    </div>
+  </section>
+  <section class="ci-tab-panel ci-tab-scroll" data-tab-panel="notes">
+    <div class="ci-tab-inner"><section class="ci-card notes-section"><h2><span>◆</span> Anotações</h2><textarea name="system.notes" class="notes-large" placeholder="Observações, comportamento, pistas e informações do NPC...">{{system.notes}}</textarea></section></div>
+  </section>
+</div>

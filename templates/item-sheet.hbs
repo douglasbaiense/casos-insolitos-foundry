@@ -1,0 +1,68 @@
+<form class="ci-item-form {{#if isAbility}}ci-item-ability-form{{/if}}">
+  <header class="ci-item-header">
+    <div class="ci-item-icon-frame" title="Selecionar ícone do item">
+      <img src="{{item.img}}" data-action="editImage" data-edit="img" alt="Ícone de {{item.name}}">
+      <span class="ci-item-icon-hint"><i class="fa-solid fa-image"></i></span>
+    </div>
+    <div class="ci-item-heading">
+      <div class="ci-kicker">CASOS INSÓLITOS</div>
+      <h1>{{#if isWeapon}}Arma{{else if isAbility}}Habilidade Insólita{{else}}Equipamento{{/if}}</h1>
+      <p>{{#if isWeapon}}Registro de arma{{else if isAbility}}Registro de capacidade especial{{else}}Registro de evidência pessoal{{/if}}</p>
+    </div>
+  </header>
+  <div class="ci-item-scroll">
+    <label>Nome <input type="text" name="name" value="{{item.name}}"></label>
+
+    {{#if isAbility}}
+    <section class="ci-item-section ci-item-ability-section">
+      <h2>Habilidade Insólita</h2>
+      <label>Tipo
+        <select name="system.abilityType">
+          {{#each abilityTypes}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+        </select>
+      </label>
+      <label>Alvo
+        <select name="system.target">
+          {{#each targetTypes}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+        </select>
+      </label>
+      <label>Periculosidade
+        <select name="system.damage">
+          {{#each abilityDamageTypes}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{value}} — {{label}}</option>{{/each}}
+        </select>
+      </label>
+    </section>
+    {{/if}}
+
+    {{#if isWeapon}}
+    <section class="ci-item-section">
+      <h2>Arma</h2>
+      <label>Tipo
+        <select name="system.weaponType">
+          {{#each weaponTypes}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+        </select>
+      </label>
+      <label>Periculosidade
+        <select name="system.damage">
+          {{#each damageTypes}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{value}} — {{label}}</option>{{/each}}
+        </select>
+      </label>
+    </section>
+    {{/if}}
+
+    {{#unless isWeapon}}
+      {{#unless isAbility}}<label>Quantidade <input type="number" min="1" name="system.quantity" value="{{system.quantity}}"></label>{{/unless}}
+    {{/unless}}
+    {{#unless isAbility}}
+    <div class="ci-item-grid ci-item-grid-common">
+      <label class="ci-inline"><input type="checkbox" name="system.carried" {{checked system.carried}}> Carregado</label>
+      <label class="ci-inline"><input type="checkbox" name="system.evidence" {{checked system.evidence}}> Evidência</label>
+    </div>
+    {{/unless}}
+    <label>Descrição <textarea name="system.description">{{system.description}}</textarea></label>
+  </div>
+  <footer class="ci-item-footer">
+    <button type="button" data-action="cancelItem">Cancelar</button>
+    <button type="submit" class="primary"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+  </footer>
+</form>

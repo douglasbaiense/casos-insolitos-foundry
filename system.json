@@ -1,0 +1,55 @@
+{
+  "id": "casos-insolitos",
+  "title": "Casos Insólitos RPG",
+  "description": "Sistema para jogar Casos Insólitos — RPG de investigação paranormal.",
+  "version": "1.0.2",
+  "compatibility": {
+    "minimum": 13,
+    "verified": 14
+  },
+  "authors": [
+    {
+      "name": "Douglas Baiense",
+      "url": "https://casosinsolitos.com.br",
+      "discord": "frenzydoug"
+    }
+  ],
+  "url": "https://github.com/douglasbaiense/casos-insolitos-foundry",
+  "manifest": "https://github.com/douglasbaiense/casos-insolitos-foundry/releases/latest/download/system.json",
+  "download": "https://github.com/douglasbaiense/casos-insolitos-foundry/releases/download/v1.0.2/casos-insolitos.zip",
+  "license": "LICENSE.txt",
+  "readme": "README.md",
+  "esmodules": [
+    "module/casos-insolitos.mjs"
+  ],
+  "styles": [
+    "styles/casos-insolitos.css"
+  ],
+  "languages": [
+    {
+      "lang": "pt-BR",
+      "name": "Português (Brasil)",
+      "path": "lang/pt-BR.json"
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "investigador": {},
+      "npc": {}
+    },
+    "Item": {
+      "equipment": {},
+      "weapon": {},
+      "ability": {}
+    }
+  },
+  "primaryTokenAttribute": "hp",
+  "secondaryTokenAttribute": "sanity",
+  "media": [
+    {
+      "type": "icon",
+      "url": "assets/simbolo.webp"
+    }
+  ]
+}
+

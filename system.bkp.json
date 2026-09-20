@@ -1,0 +1,43 @@
+{
+  "id": "casos-insolitos",
+  "title": "Casos Insólitos RPG",
+  "description": "Sistema para jogar Casos Insólitos — RPG de investigação paranormal.",
+  "version": "1.0.2",
+  "compatibility": {
+    "minimum": 13,
+    "verified": 14
+  },
+  "authors": [
+    {
+      "name": "Douglas Baiense",
+      "url": "https://casosinsolitos.com.br"
+    }
+  ],
+  "url": "https://casosinsolitos.com.br",
+  "license": "MIT",
+  "readme": "README.md",
+  "esmodules": [
+    "module/casos-insolitos.mjs"
+  ],
+  "styles": [
+    "styles/casos-insolitos.css"
+  ],
+  "languages": [
+    {
+      "lang": "pt-BR",
+      "name": "Português (Brasil)",
+      "path": "lang/pt-BR.json"
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "investigador": {},
+      "npc": {}
+    },
+    "Item": {
+      "equipment": {},
+      "weapon": {},
+      "ability": {}
+    }
+  }
+}
