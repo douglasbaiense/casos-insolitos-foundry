@@ -7,7 +7,7 @@ https://casosinsolitos.com.br
 
 ## Versão
 
-1.0.2 — compatível com Foundry VTT 13 e 14.
+1.0.3 — compatível com Foundry VTT 13 e 14.
 
 ## Principais recursos
 
