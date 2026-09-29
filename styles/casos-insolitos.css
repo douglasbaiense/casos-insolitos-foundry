@@ -950,3 +950,18 @@
 @media (max-width:700px) {
   .ci-narrator-grid.three, .ci-narrator-grid.four { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
+
+/* ===== Ficha de item: janela maior, editor de descrição e ícones nas listas ===== */
+.ci-item-sheet { min-width:520px; min-height:520px; }
+.ci-item-form .ci-field-label { display:block; color:var(--ci-muted); font-size:10px; font-weight:bold; letter-spacing:1px; margin-bottom:6px; }
+.ci-item-form .ci-item-description { margin-top:4px; }
+.ci-item-form prose-mirror { width:100%; min-height:340px; border:1px solid var(--ci-line); background:#fbf8f2; color:var(--ci-ink); font-size:14px; font-weight:normal; letter-spacing:normal; line-height:1.5; }
+.ci-item-form prose-mirror .editor-content { cursor:text; overflow:auto; }
+.ci-item-form prose-mirror .ProseMirror { min-height:280px; padding:10px 12px; outline:none; cursor:text; user-select:text; }
+.ci-item-form prose-mirror img { max-width:100%; height:auto; }
+.ci-item-ability-form prose-mirror { border-color:#b9a9b8; background:#fbf8fb; color:#2a202a; }
+
+.ci-item-thumb { flex:0 0 26px; width:26px; height:26px; object-fit:cover; border:1px solid #806f59; background:#171513; }
+.ci-name-line { display:flex; align-items:center; gap:8px; min-width:0; }
+.ci-desc-preview { display:block; width:100%; padding:2px 0; border:0; background:transparent; color:var(--ci-ink); font-family:inherit; font-size:inherit; text-align:left; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ci-desc-preview em { color:var(--ci-muted); }
