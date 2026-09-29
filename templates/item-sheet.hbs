@@ -59,7 +59,10 @@
       <label class="ci-inline"><input type="checkbox" name="system.evidence" {{checked system.evidence}}> Evidência</label>
     </div>
     {{/unless}}
-    <label>Descrição <textarea name="system.description">{{system.description}}</textarea></label>
+    <div class="ci-item-description">
+      <span class="ci-field-label">Descrição</span>
+      <prose-mirror name="system.description" value="{{descriptionHTML}}"></prose-mirror>
+    </div>
   </div>
   <footer class="ci-item-footer">
     <button type="button" data-action="cancelItem">Cancelar</button>

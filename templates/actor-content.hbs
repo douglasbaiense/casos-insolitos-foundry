@@ -134,11 +134,11 @@
           {{#if inventoryItems.length}}
             {{#each inventoryItems}}
             <div class="inventory-row {{#if system.evidence}}evidence{{/if}}">
-              <div class="inventory-cell item-name-cell"><input class="ci-inventory-input" data-item-id="{{id}}" data-item-field="name" value="{{name}}" aria-label="Nome do item"><button type="button" class="inventory-edit" data-action="editItem" data-item-id="{{id}}" title="Editar item"><i class="fa-solid fa-pen"></i></button><button type="button" class="inventory-delete" data-action="deleteItem" data-item-id="{{id}}" title="Excluir item"><i class="fa-solid fa-trash"></i></button></div>
+              <div class="inventory-cell item-name-cell">{{#if customImg}}<img class="ci-item-thumb" src="{{customImg}}" alt="">{{/if}}<input class="ci-inventory-input" data-item-id="{{id}}" data-item-field="name" value="{{name}}" aria-label="Nome do item"><button type="button" class="inventory-edit" data-action="editItem" data-item-id="{{id}}" title="Editar item"><i class="fa-solid fa-pen"></i></button><button type="button" class="inventory-delete" data-action="deleteItem" data-item-id="{{id}}" title="Excluir item"><i class="fa-solid fa-trash"></i></button></div>
               <div class="inventory-cell"><input class="ci-inventory-input quantity-input" type="number" min="1" data-item-id="{{id}}" data-item-field="system.quantity" value="{{system.quantity}}" aria-label="Quantidade"></div>
               <div class="inventory-cell center-cell"><input class="ci-inventory-input" type="checkbox" data-item-id="{{id}}" data-item-field="system.carried" {{checked system.carried}} aria-label="Carregado"></div>
               <div class="inventory-cell center-cell"><input class="ci-inventory-input evidence-toggle" type="checkbox" data-item-id="{{id}}" data-item-field="system.evidence" {{checked system.evidence}} aria-label="Evidência"></div>
-              <div class="inventory-cell description-cell"><input class="ci-inventory-input" data-item-id="{{id}}" data-item-field="system.description" value="{{system.description}}" aria-label="Descrição do item" placeholder="Descrição ou observações"></div>
+              <div class="inventory-cell description-cell"><button type="button" class="ci-desc-preview" data-action="editItem" data-item-id="{{id}}" title="Abrir item">{{#if descriptionPreview}}{{descriptionPreview}}{{else}}<em>Sem descrição</em>{{/if}}</button></div>
             </div>
             {{/each}}
           {{else}}<div class="inventory-empty">Nenhum equipamento registrado.</div>{{/if}}
@@ -156,7 +156,7 @@
           {{#if weaponItems.length}}
             {{#each weaponItems}}
             <div class="weapon-row {{#if system.evidence}}evidence{{/if}}">
-              <div class="weapon-name"><i class="weapon-icon {{weaponIcon}}" aria-hidden="true"></i><input class="ci-inventory-input" data-item-id="{{id}}" data-item-field="name" value="{{name}}"></div>
+              <div class="weapon-name">{{#if customImg}}<img class="ci-item-thumb" src="{{customImg}}" alt="">{{else}}<i class="weapon-icon {{weaponIcon}}" aria-hidden="true"></i>{{/if}}<input class="ci-inventory-input" data-item-id="{{id}}" data-item-field="name" value="{{name}}"></div>
               <div class="center-cell"><input class="ci-inventory-input" type="checkbox" data-item-id="{{id}}" data-item-field="system.carried" {{checked system.carried}} aria-label="Carregado"></div>
               <span>{{weaponTypeLabel}}</span>
               <span class="danger-badge damage-{{dangerTone}}">{{damage}} · {{dangerLabel}}</span>
