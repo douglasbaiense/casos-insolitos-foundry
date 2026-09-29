@@ -1,4 +1,5 @@
 import { rollTest, rollDamage } from "./dice.mjs";
+import { htmlToPlainText, customItemImg } from "./item-sheet.mjs";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
@@ -238,6 +239,8 @@ export class InvestigatorSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
       name: item.name,
       type: item.type,
       img: item.img,
+      customImg: customItemImg(item),
+      descriptionPreview: htmlToPlainText(item.system.description),
       system: item.system,
       isWeapon: item.type === "weapon",
       weaponTypeLabel: item.type === "weapon" ? (item.system.weaponType === "firearm" ? "Arma de fogo" : "Arma branca") : "Equipamento",

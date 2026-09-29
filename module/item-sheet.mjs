@@ -1,13 +1,26 @@
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
 
+/** Converte HTML em texto simples (usado nas prévias de descrição das listas). */
+export function htmlToPlainText(html = "") {
+  const doc = new DOMParser().parseFromString(String(html ?? ""), "text/html");
+  return (doc.body.textContent ?? "").replace(/\s+/g, " ").trim();
+}
+
+/** Retorna o caminho do ícone somente se ele foi personalizado (diferente do padrão do Foundry). */
+export function customItemImg(item) {
+  const fallback = item.constructor?.DEFAULT_ICON ?? "icons/svg/item-bag.svg";
+  return item.img && item.img !== fallback ? item.img : "";
+}
+
 export class CasosItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   static DEFAULT_OPTIONS = {
     classes: ["casos-insolitos", "ci-item-sheet"],
-    position: { width: 540, height: 650 },
+    position: { width: 760, height: 780 },
     window: { icon: "fa-solid fa-box-open", resizable: true },
     form: { closeOnSubmit: false, submitOnChange: false },
     actions: {
+      editImage: CasosItemSheet.#editImage,
       saveItem: CasosItemSheet.#saveItem,
       cancelItem: CasosItemSheet.#cancelItem
     }
@@ -22,8 +35,24 @@ export class CasosItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     form: { template: "systems/casos-insolitos/templates/item-sheet.hbs", scrollable: [".ci-item-scroll"] }
   };
 
+  /** Ícone escolhido no seletor, ainda não gravado (só é gravado ao clicar em Salvar). */
+  #pendingImg = null;
+
   async _onRender(context, options) {
     await super._onRender(context, options);
+    if (this.#pendingImg) {
+      const icon = this.element?.querySelector('img[data-edit="img"]');
+      if (icon) icon.src = this.#pendingImg;
+    }
+    // Clicar em qualquer ponto da área da descrição coloca o cursor no editor.
+    const editorArea = this.element?.querySelector("prose-mirror .editor-content");
+    if (editorArea && !editorArea.dataset.ciFocus) {
+      editorArea.dataset.ciFocus = "true";
+      editorArea.addEventListener("click", (event) => {
+        const pm = editorArea.querySelector(".ProseMirror");
+        if (pm && !pm.contains(event.target)) pm.focus();
+      });
+    }
     const form = this.element?.querySelector("form");
     if (!form || form.dataset.ciBound) return;
     form.dataset.ciBound = "true";
@@ -39,6 +68,7 @@ export class CasosItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       ...context,
       item: this.item,
       system: this.item.system,
+      descriptionHTML: this.#descriptionForEditor(),
       isWeapon: this.item.type === "weapon",
       isAbility: this.item.type === "ability",
       weaponTypes: [
@@ -71,16 +101,45 @@ export class CasosItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     };
   }
 
+  /** Descrições antigas eram texto puro: preserva as quebras de linha ao abrir no editor. */
+  #descriptionForEditor() {
+    const raw = String(this.item.system.description ?? "");
+    if (!raw || /<[a-z][\s\S]*>/i.test(raw)) return raw;
+    const escaped = raw.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    return `<p>${escaped.replace(/\r?\n/g, "<br>")}</p>`;
+  }
+
+  /** Lê o HTML do editor de descrição, confirmando antes o que foi digitado. */
+  #readDescription(form, data) {
+    const editor = form.querySelector('prose-mirror[name="system.description"]');
+    if (editor) {
+      const saveButton = editor.querySelector('[data-action="save"]');
+      if (saveButton) {
+        saveButton.click();
+        if (typeof editor.value === "string") return editor.value;
+      } else {
+        const content = editor.querySelector(".ProseMirror");
+        if (content) {
+          const clone = content.cloneNode(true);
+          clone.querySelectorAll(".ProseMirror-trailingBreak").forEach(node => node.remove());
+          return clone.innerHTML;
+        }
+        if (typeof editor.value === "string") return editor.value;
+      }
+    }
+    return data.get("system.description")?.toString() ?? "";
+  }
+
   async #saveFromForm(form) {
     const data = new FormData(form);
     const update = {
       name: data.get("name")?.toString() ?? this.item.name,
-      "system.description": data.get("system.description")?.toString() ?? "",
+      "system.description": this.#readDescription(form, data),
       "system.carried": data.has("system.carried"),
       "system.evidence": data.has("system.evidence")
     };
     if (this.item.type === "equipment") {
-      update["system.quantity"] = Math.max(1, Number(this.item.system.quantity ?? 1));
+      update["system.quantity"] = Math.max(1, Math.floor(Number(data.get("system.quantity")) || Number(this.item.system.quantity ?? 1)));
     }
     if (this.item.type === "ability") {
       update["system.abilityType"] = data.get("system.abilityType")?.toString() || "power";
@@ -91,12 +150,33 @@ export class CasosItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       update["system.weaponType"] = data.get("system.weaponType")?.toString() || "firearm";
       update["system.damage"] = data.get("system.damage")?.toString() || "1d6";
     }
+    if (this.#pendingImg && this.#pendingImg !== this.item.img) update.img = this.#pendingImg;
     await this.item.update(update, { render: false });
+    this.#pendingImg = null;
+    // Itens do mundo (aba Itens da barra lateral): como a atualização acima não
+    // renderiza, atualiza a lista para mostrar o novo ícone/nome.
+    if (!this.item.parent && !this.item.pack) ui.items?.render();
     const parentSheet = this.item.parent?.sheet;
     if (parentSheet?.rememberViewState) parentSheet.rememberViewState();
     await this.close();
     if (parentSheet?.refreshPreservingView) await parentSheet.refreshPreservingView();
     ui.notifications.info("Item salvo.");
+  }
+
+  static async #editImage(event, target) {
+    const FilePickerClass = foundry.applications.apps?.FilePicker?.implementation
+      ?? foundry.applications.apps?.FilePicker
+      ?? globalThis.FilePicker;
+    const picker = new FilePickerClass({
+      type: "image",
+      current: this.#pendingImg ?? this.item.img,
+      callback: (path) => {
+        this.#pendingImg = path;
+        const icon = this.element?.querySelector('img[data-edit="img"]');
+        if (icon) icon.src = path;
+      }
+    });
+    return picker.browse();
   }
 
   static async #saveItem(event, target) {

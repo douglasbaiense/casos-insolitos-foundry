@@ -1,4 +1,5 @@
 import { rollDamage } from "./dice.mjs";
+import { htmlToPlainText, customItemImg } from "./item-sheet.mjs";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
@@ -157,7 +158,7 @@ export class NPCSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     const context = await super._prepareContext(options);
     const s = this.actor.system;
     const items = this.actor.items.map(item => ({
-      id: item.id, name: item.name, type: item.type, img: item.img, system: item.system,
+      id: item.id, name: item.name, type: item.type, img: item.img, customImg: customItemImg(item), descriptionPreview: htmlToPlainText(item.system.description), system: item.system,
       isWeapon: item.type === "weapon", isAbility: item.type === "ability",
       weaponTypeLabel: item.type === "weapon" ? (item.system.weaponType === "firearm" ? "Arma de fogo" : "Arma branca") : "",
       weaponIcon: item.type === "weapon" ? (item.system.weaponType === "firearm" ? "fa-solid fa-gun" : "fa-solid fa-knife") : "",
